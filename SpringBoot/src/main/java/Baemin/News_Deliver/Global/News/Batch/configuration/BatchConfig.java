@@ -59,7 +59,6 @@ import java.util.List;
  * - headers: {@code Authorization: {API_KEY}}
  * - query params: {@code page, page_size, date_from, date_to, order}
  *
- * @author 김원중
  */
 @Slf4j
 @Configuration

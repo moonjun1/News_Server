@@ -31,7 +31,6 @@ import org.springframework.context.annotation.Configuration;
  * - Spring Boot 3.x 환경에서 `JavaTimeModule`을 등록하지 않으면 `LocalDateTime` 직렬화 오류 발생 가능
  * - ElasticsearchClient는 singleton bean으로 등록됨
  *
- * @author 김원중
  */
 @Configuration
 public class ElasticsearchClientConfig {
@@ -48,7 +47,6 @@ public class ElasticsearchClientConfig {
         // HTTP 기반 Low-level 클라이언트 구성
         RestClient restClient = RestClient.builder(
                 new HttpHost("elasticsearch", 9200)
-                //FIXME : ElasticSearch 수정 시 수정할 것
         ).build();
 
         // LocalDateTime 직렬화 지원 및 ISO 포맷 지정

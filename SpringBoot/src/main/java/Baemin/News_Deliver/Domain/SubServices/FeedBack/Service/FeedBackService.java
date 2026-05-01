@@ -27,8 +27,6 @@ public class FeedBackService {
     /**
      * 키워드 반영도 피드백 메서드
      *
-     * 빠르게 구현해야 해서 캐시는 전부 삭제로 임시 구현
-     *
      * @param request 피드백 요청 DTO
      * @return 피드백 결과 반환
      */
@@ -79,8 +77,6 @@ public class FeedBackService {
 
     /**
      * 콘텐츠 품질 피드백 메서드
-     *
-     * 빠르게 구현해야 해서 캐시는 전부 삭제로 임시 구현
      *
      * @param request 피드백 요청 DTO
      * @return 피드백 결과 반환

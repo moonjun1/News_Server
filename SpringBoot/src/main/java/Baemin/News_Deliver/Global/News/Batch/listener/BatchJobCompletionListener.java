@@ -23,8 +23,6 @@ import org.springframework.stereotype.Component;
  * </ul>
  *
  * 로그에 삭제된 뉴스 개수를 출력합니다.
- *
- * @author 김원중
  */
 @Slf4j
 @Component

@@ -52,7 +52,6 @@ public class BatchSchedulerService {
 
     @PostConstruct
     public void scheduleNewsBatch() {
-        //추후 자정으로 바꿀 것
         String cron = "0 0 0 * * *";
 
         Runnable batchTask = () -> {
@@ -70,7 +69,6 @@ public class BatchSchedulerService {
 
             } catch (Exception e) {
                 log.error("[BatchScheduler] DB 배치 실패: DB 배치 중 예외 발생: {}", e.getMessage(), e);
-                //우선은 코드 중단 이후에 로직은 정책에 맞춰서 작성할 것
                 throw new KakaoException(ErrorCode.BATCH_SCHEDULER_FAILED);
             }
 
@@ -86,7 +84,6 @@ public class BatchSchedulerService {
 
             } catch (Exception e) {
                 log.error("[BatchScheduler] 엘라스틱 서치 인덱싱 중 예외 발생: {}", e.getMessage(), e);
-                //우선은 코드 중단 이후에 로직은 정책에 맞춰서 작성할 것
                 throw new KakaoException(ErrorCode.ES_SCHEDULER_FAILED);
             }
 
@@ -102,7 +99,6 @@ public class BatchSchedulerService {
 
             } catch (Exception e) {
                 log.error("[BatchScheduler] 핫토픽 배치 중 예외 발생: {}", e.getMessage(), e);
-                //우선은 코드 중단 이후에 로직은 정책에 맞춰서 작성할 것
                 throw new KakaoException(ErrorCode.HT_SCHEDULER_FAILED);
             }
 

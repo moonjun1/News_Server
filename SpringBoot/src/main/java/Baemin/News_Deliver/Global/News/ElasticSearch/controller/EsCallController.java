@@ -20,7 +20,6 @@ import java.io.IOException;
  * 색인 대상: {@code news-index-nori}
  * 색인 데이터: 전날 기준 뉴스 데이터 (섹션별)
  *
- * @author 김원중
  */
 @RestController
 @RequiredArgsConstructor

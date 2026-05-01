@@ -35,8 +35,6 @@ import org.springframework.stereotype.Service;
  * <p>모든 섹션을 처리하는데 걸린 총 소요 시간도 로그로 출력됩니다.</p>
  *
  * <p>이 서비스는 컨트롤러에서 호출되어 사용되며, 성공 시 200 OK를, 실패 시 500을 응답합니다.</p>
- *
- * @author 김원중
  */
 @Slf4j
 @RequiredArgsConstructor

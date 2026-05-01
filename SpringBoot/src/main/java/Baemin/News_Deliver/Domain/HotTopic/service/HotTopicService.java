@@ -35,8 +35,6 @@ import java.util.List;
  *
  * 기준 날짜는 항상 **전날(CURDATE - 1)** 이며,
  * DB에는 최대 10건의 키워드와 키워드 등장 횟수(docCount)가 저장됩니다.
- *
- * @author 김원중
  */
 @Slf4j
 @Service
@@ -69,7 +67,6 @@ public class HotTopicService {
     public List<HotTopicResponseDTO> getHotTopicList() {
         long start = System.nanoTime();
         String cacheKey = "hottopic:daily";
-// 캐싱 때문에 발생하는 문제를 임시적으로 해결하기 위한 임시 주석 : 성열 7월 19일 토요일
         List<HotTopicResponseDTO> cached = (List<HotTopicResponseDTO>) redisTemplate.opsForValue().get(cacheKey);
         if (cached != null) {
             long end = System.nanoTime();

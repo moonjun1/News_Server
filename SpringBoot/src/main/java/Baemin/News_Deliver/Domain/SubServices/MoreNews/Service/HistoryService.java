@@ -32,20 +32,12 @@ public class HistoryService {
     private final AuthService authService;
 
     /**
-     * 내 히스토리 조회하기 메서드 Ver2.0
-     *
-     * Updated
-     * Why : 프론트 레이어에서 페이지 네이셔닝을 위한 정보 부족
-     * How : 반환 DTO에 페이지네이션 정보 추가
-     * When : 2025-07-21
-     * Who : 류성열
+     * 내 히스토리 조회하기 메서드
      *
      * @param page 현재 페이지 번호 (0부터 시작)
      * @param size 페이지당 아이템 수
      * @param authentication 로그인 인증 객체 (카카오 ID 포함)
      * @return 페이지 정보 + 그룹핑된 뉴스 히스토리 데이터
-     *
-     * // @CacheEvict(cacheNames = "groupedNewsHistory", allEntries = true)
      */
     @Cacheable(
             value = "groupedNewsHistory",                    // Redis에서 사용할 캐시 이름

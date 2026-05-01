@@ -38,7 +38,6 @@ import java.util.Objects;
  * 검색 필드: {@code combinedTokens} (제목 + 요약 통합 필드)
  * 색인 기준 날짜: {@code CURDATE() - INTERVAL 1 DAY}
  *
- * @author 김원중
  */
 @Slf4j
 @Service
@@ -100,7 +99,6 @@ public class NewsEsService {
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
         LocalDateTime startOfYesterday = today.minusDays(1).atStartOfDay();
         LocalDateTime endOfYesterday = today.atStartOfDay();
-        //FIXME : AWS RDS와 시간대 차이로 임시로 서버측에서 시간대를 조절하였음. 설정 문제로 인한 수정이니 해결되면 수정할 것.
         String sql = """
                 SELECT *
                 FROM news
@@ -108,14 +106,6 @@ public class NewsEsService {
                   AND published_at < ?
                   AND sections = ?
             """;
-
-//        String sql = """
-//            SELECT *
-//            FROM news
-//            WHERE published_at >= CURDATE() - INTERVAL 1 DAY
-//              AND published_at < CURDATE()
-//              AND sections = ?
-//                """;
 
         return jdbcTemplate.query(
                 sql,

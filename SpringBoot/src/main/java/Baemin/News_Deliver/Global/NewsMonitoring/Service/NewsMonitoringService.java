@@ -94,65 +94,6 @@ public class NewsMonitoringService {
         }
     }
 
-    // ======================= deprecated =========================
-
-    /**
-     * 매 정각마다 실행 되는 모니터링 스케줄러
-     *
-     * 각 섹션 별 현재 몇개의 데이터가 모였는지 모니터링
-     * 9000개가 넘는 섹션 발견 시, 즉시 DB에 Batch 실시
-     *
-     */
-//    @Scheduled(cron = "0 0 * * * *") // 매 시간 정각
-//    //@Scheduled(cron = "0 */5 * * * *") // 5분
-//    // @Scheduled(cron = "0 */3 * * * *") // 3분
-//    //@Scheduled(cron = "0 */2 * * * *") // 2분
-//    //@Scheduled(cron = "0 * * * * *") // 1분
-//    public void monitoring(){
-//
-//        /* 날짜 & 시간 확인 */
-//        LocalDate day = LocalDate.now(); // 오늘의 날짜
-//        LocalDateTime time = LocalDateTime.now(); // 현재 날짜와 시간(분 단위 포함)
-//        log.info("// ======================= 오늘의 날짜 : {} =========================", day); // 오늘의 날짜 로그 확인
-//        log.info("현재 시간 : {}", time);
-//
-//        /* 날짜 포매팅 작업 */
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); //원하는 포맷 지정
-//        String dateTo = day.format(formatter); //문자열로 변환
-//        String dateFrom = day.format(formatter); //문자열로 변환
-//
-//        /* 섹션 별 누적 데이터 수 모니터링 로직 */
-//        for (String section : sections) {
-//
-//            // 현재 섹션의 현 시각 누적 Total_Item 수 확인
-//            int total_items = newsMonitoringManager.getTotalItems(section, dateFrom, dateTo);
-//
-//            /* 뉴스 데이터 9000개 이상 시 중간 배치 + Redis 기록 */
-//            if(total_items >= 9000 && total_items <= 18000){
-//
-//                // 해당 섹션이 이전에도 사전 Batch 작업이 실행 되었는지 확인 (Redis에서 횟수 조회)
-//                int n = intermediateBatchRedisService.getBatchCount(section);
-//                log.info("{} 섹션 기존 중간 배치 현황 : 총 {}회 중간 배치 ",section, n);
-//
-//                // 현재 total_item이 기준(9000개)을 넘으면 Job Launcher로 Batch 작업 진행 메서드 호출
-//                runNewsBatch(section);
-//
-//                // 중간 배치가 진행된 섹션 배치 현황 기록 (Redis에 횟수 증가)
-//                intermediateBatchRedisService.incrementBatchCount(section);
-//
-//            } /* 2번째 중간 배치 부터 주의 메시지 호출 */
-//            else if(total_items >= 18000){
-//
-//                // Job Launcher로 Batch 작업 진행 메서드 호출
-//                runNewsBatch(section);
-//
-//                // 현재 total_item이 기준(18000개)을 넘으면 Job Launcher로 Batch 작업 진행 메서드 호출
-//                log.info("[#주의#] {}섹션의 total_items수 : {}",section,total_items); // 추후, 하루에 3번 이상의 중간 호출이 일어나는 것에 대한 방어코드도 작성할 것
-//
-//            }
-//        }
-//    }
-
     // ======================= Spring Batch Job Launcher (Batch Starter Method) =========================
 
     /**

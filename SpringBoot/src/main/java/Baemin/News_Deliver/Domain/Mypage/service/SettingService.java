@@ -37,8 +37,6 @@ import java.util.List;
  * </ul>
  *
  * <p>각 설정은 {@link Setting} 엔티티를 중심으로 연관된 키워드, 차단 키워드, 요일 데이터를 함께 처리합니다.</p>
- *
- * @author 김원중
  */
 @Service
 @Slf4j
@@ -80,15 +78,6 @@ public class SettingService {
                 .user(user)
                 .build();
 
-        /**
-         * Add for Bug_Fix
-         * What : Setting 객체 저장 코드
-         * Why : Setting 데이터 저장 없이,  자식 관계인 SettingKeyword는 저장되는 상황 발생 -> Error 발생
-         * When : 2025-07-21
-         * Who : 류성열
-         *
-         * Then : Setting 객체를 먼저 저장, 영속 상태로 만들어 오류 해결 시도
-         */
         settingRepository.save(setting);
 
         saveSettingKeyword(settingDTO, setting);
@@ -279,23 +268,7 @@ public class SettingService {
     }
 
     public List<Setting> getAllSettings() {
-
-        /**
-         * What : 다음님 오류 코드에 대한 대응
-         * How : 세팅값에 적용된 기간 + 요일을 가져옴
-         * Who : 류성열
-         * When : 2025-07-21
-         *
-         */
         return settingRepository.findAllValidSettingsWithDays(LocalDateTime.now());
-
-        /**
-         * What :다음님 코드 오류
-         * Why : 삭제된 세팅 값까지 가져와서, 오류를 발생
-         * -> 삭제된 세팅은 기록은 존재하지만, 요일 값은 삭제 되어 NP 발생
-         *
-         */
-        //return settingRepository.findAll();
     }
 
     public Setting getById(Long settingId) {

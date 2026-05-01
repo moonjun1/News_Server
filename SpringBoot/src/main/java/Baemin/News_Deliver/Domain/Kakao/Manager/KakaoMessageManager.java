@@ -69,19 +69,10 @@ public class KakaoMessageManager {
         return accessToken;
     }
 
-    /*
+    /**
      * 사용자의 키워드를 바탕으로 뉴스를 검색하여 리스트로 반환하는 메서드
      *
-     * Edited
-     * What : 히스토리 오류를 제거하도록 수정
-     * Why : 히스토리 DB에 2개의 세팅이 합쳐져서 뉴스가 발송되는 오류 발생
-     * When : 2025-07-20
-     * How : 류성열
-     *
-     * Deprecated된 메서드는 하단에 정리하였습니다.
-     *
      * @param userId 유저의 고유 번호
-     * @return 각 세팅에 맞는 뉴스 기사 리스트
      */
     public void getNewsEsDocumentList_Fixed(Long userId) {
 
@@ -101,7 +92,6 @@ public class KakaoMessageManager {
             }
 
             List<NewsEsDocument> newsList = newsService.searchNewsWithFallback(keywords, blockKeywords);
-            //List<NewsEsDocument> newsList = newsService.searchNews(keywords, blockKeywords);
 
             log.info(">> 세팅당 검색된 뉴스 수: {}", newsList.size());
 
