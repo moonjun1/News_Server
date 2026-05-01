@@ -23,6 +23,7 @@ public class KakaoMessageService {
     /**
      * 유저의 세팅값에 맞는 뉴스를 추출 후, 카카오 메시지로 전송하는 메서드
      *
+     * @author 배세정
      * @param refreshAccessToken 유저의 리프레시 토큰
      * @param userId 유저의 고유 번호
      */

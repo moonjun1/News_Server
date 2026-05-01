@@ -18,6 +18,8 @@ import java.util.Map;
  *
  * Spring Security의 기본 OAuth2UserService를 확장하여
  * 카카오 OAuth2 로그인에 특화된 사용자 정보 처리를 담당합니다.
+ *
+ * @author 박채원
  * 카카오에서 제공하는 사용자 정보를 검증하고 Spring Security에서
  * 사용할 수 있는 OAuth2User 객체로 변환합니다.
  * 주요 기능:

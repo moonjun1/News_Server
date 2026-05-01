@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
  * <p>
  * Cron 표현식은 스케줄러(TaskScheduler)에서 사용되며,
  * 설정된 요일(Days)과 시간(DeliveryTime)을 기반으로 생성됩니다.
+ *
+ * @author 배세정
  */
 @Service
 @RequiredArgsConstructor

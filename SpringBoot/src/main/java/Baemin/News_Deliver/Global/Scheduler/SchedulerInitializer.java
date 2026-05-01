@@ -22,6 +22,8 @@ import java.util.List;
  * <p>ElasticSearch 뉴스 배치, 사용자 맞춤 뉴스 발송 등의 스케줄 등록 작업을 담당합니다.</p>
  *
  * <p>현재는 {@code @PostConstruct}를 통해 서버 시작 시 자동으로 실행됩니다.</p>
+ *
+ * @author 배세정
  */
 
 @Component

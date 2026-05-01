@@ -21,6 +21,13 @@ import org.springframework.http.HttpMethod;
 
 import java.util.Arrays;
 
+/**
+ * Spring Security 설정 클래스
+ *
+ * <p>JWT 기반 인증, OAuth2 카카오 로그인, CORS 정책, 엔드포인트별 접근 권한을 정의합니다.</p>
+ *
+ * @author 박채원
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor

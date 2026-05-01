@@ -43,6 +43,8 @@ import java.util.concurrent.ScheduledFuture;
  * <li>기존 스케줄 취소 및 갱신</li>
  * <li>스케줄 실행 시 카카오 메시지 발송 트리거</li>
  * </ul>
+ *
+ * @author 배세정
  */
 
 @Service

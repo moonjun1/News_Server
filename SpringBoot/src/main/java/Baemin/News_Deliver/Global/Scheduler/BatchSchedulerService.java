@@ -30,6 +30,8 @@ import java.util.concurrent.ScheduledFuture;
  *     <li>핫토픽 수집 및 저장</li>
  *     <li>사용자 맞춤 스케줄 등록</li>
  * </ul>
+ *
+ * @author 배세정
  */
 @Slf4j
 @Service
