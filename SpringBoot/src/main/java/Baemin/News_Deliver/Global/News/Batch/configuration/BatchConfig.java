@@ -30,7 +30,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 뉴스 배치 관련 설정 클래스
@@ -168,18 +170,33 @@ public class BatchConfig {
     /**
      * 뉴스 DTO → Entity 변환 Processor
      *
-     * <p>섹션이 존재하지 않는 뉴스는 {@code null}을 반환하여 skip 처리합니다.</p>
+     * <p>섹션이 존재하지 않거나 배치 수집 중 중복된 제목의 뉴스는 skip 처리합니다.</p>
+     * <p>제목 정규화: 대괄호/소괄호 태그 제거 후 앞 30자로 중복 판별</p>
      *
      * @return ItemProcessor
      */
     @Bean
     public ItemProcessor<NewsItemDTO, News> newsProcessor() {
-        // 받아온 DTO를 엔티티로 변환하는 과정 (하나씩 처리)
+        // 배치 실행 단위로 중복 제목 추적 (thread-safe Set)
+        Set<String> seenTitles = Collections.synchronizedSet(new java.util.HashSet<>());
 
         return dto -> {
             if (dto.getSections() == null || dto.getSections().isEmpty()) {
                 log.warn("❌ 섹션 정보 없음 → 건너뜀 (title: {})", dto.getTitle());
-                return null; // sections가 없으면 skip
+                return null;
+            }
+
+            // 제목 정규화: [태그], (태그) 제거 후 공백 제거, 앞 30자
+            String normalizedTitle = dto.getTitle()
+                    .replaceAll("\\[.*?\\]|\\(.*?\\)", "")
+                    .replaceAll("\\s+", "")
+                    .toLowerCase();
+            String titleKey = dto.getPublisher() + "::" +
+                    (normalizedTitle.length() > 30 ? normalizedTitle.substring(0, 30) : normalizedTitle);
+
+            if (!seenTitles.add(titleKey)) {
+                log.debug("⏭ 배치 내 중복 제목 skip: {}", dto.getTitle());
+                return null;
             }
 
             return News.builder()
@@ -188,7 +205,7 @@ public class BatchConfig {
                     .publisher(dto.getPublisher())
                     .contentUrl(dto.getContent_url())
                     .publishedAt(dto.getPublished_at())
-                    .sections(dto.getSections().get(0)) // List → String
+                    .sections(dto.getSections().get(0))
                     .send(false)
                     .build();
         };
@@ -236,7 +253,7 @@ public class BatchConfig {
                 .queryParam("page_size", pageSize)
                 .queryParam("date_to", dateTo)
                 .queryParam("date_from", dateFrom)
-                .queryParam("order", "published_at")
+                .queryParam("order", "-published_at")
                 .queryParam("page", page)
                 .build()
                 .toUriString();
@@ -279,7 +296,7 @@ public class BatchConfig {
                 .queryParam("page_size", pageSize)
                 .queryParam("date_to", dateTo)
                 .queryParam("date_from", dateFrom)
-                .queryParam("order", "published_at")
+                .queryParam("order", "-published_at")
                 .queryParam("page", page)
                 .build()
                 .toUriString();
