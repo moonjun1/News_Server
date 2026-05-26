@@ -175,7 +175,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (path.equals("/run-batch") ||
                 path.startsWith("/elasticsearch/") ||
                 path.startsWith("/monitoring/test/") ||
-                path.startsWith("/kakao/")) {
+                path.startsWith("/kakao/") ||
+                path.startsWith("/api/admin/")) {
             return true;
         }
 

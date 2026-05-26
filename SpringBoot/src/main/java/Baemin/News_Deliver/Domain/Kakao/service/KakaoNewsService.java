@@ -134,11 +134,17 @@ public class KakaoNewsService {
                 );
             }
 
-            // Elasticsearch 검색 요청
+            // Elasticsearch 검색 요청 (최신 기사 우선, 관련도 보조)
             SearchRequest request = SearchRequest.of(s -> s
                     .index("news-index-nori")
                     .query(finalQuery)
                     .size(5)
+                    .sort(sort -> sort
+                            .field(f -> f
+                                    .field("published_at")
+                                    .order(SortOrder.Desc)
+                            )
+                    )
                     .sort(sort -> sort
                             .score(sc -> sc.order(SortOrder.Desc))
                     )

@@ -36,25 +36,75 @@ public class BatchJobCompletionListener implements JobExecutionListener {
     @Override
     public void afterJob(JobExecution jobExecution) {
         if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
-            String sql = """
+
+            // 1. 완전 동일 제목+언론사 중복 제거 (가장 최신 기사 유지 - id DESC)
+            String exactDupSql = """
                 DELETE FROM news
-                    WHERE (
-                        id IN (
-                            SELECT id FROM (
-                                SELECT id,
-                                       ROW_NUMBER() OVER (PARTITION BY title, publisher ORDER BY id) AS rn
-                                FROM news
-                                WHERE published_at >= CURDATE() - INTERVAL 1 DAY
-                                  AND published_at < CURDATE()
-                            ) t
-                            WHERE t.rn > 1
-                        )
-                        OR title LIKE '%[속보]%'
-                    );
+                WHERE id IN (
+                    SELECT id FROM (
+                        SELECT id,
+                               ROW_NUMBER() OVER (
+                                   PARTITION BY title, publisher
+                                   ORDER BY published_at DESC, id DESC
+                               ) AS rn
+                        FROM news
+                        WHERE published_at >= CURDATE() - INTERVAL 1 DAY
+                          AND published_at < CURDATE()
+                    ) t
+                    WHERE t.rn > 1
+                );
                 """;
 
-            int deleted = jdbcTemplate.update(sql);
-            log.info("✅ 중복 뉴스 삭제 완료: {}건", deleted);
+            // 2. 정규화 제목 기반 유사 중복 제거
+            //    - 대괄호/소괄호 태그 제거([속보], (종합) 등), 공백 제거 후 앞 30자 비교
+            //    - 같은 정규화 제목 그룹에서 가장 최신 기사만 유지
+            String similarDupSql = """
+                DELETE FROM news
+                WHERE id IN (
+                    SELECT id FROM (
+                        SELECT id,
+                               ROW_NUMBER() OVER (
+                                   PARTITION BY
+                                       LEFT(
+                                           REPLACE(
+                                               REGEXP_REPLACE(title, '\\\\[.*?\\\\]|\\\\(.*?\\\\)|\\\\s', ''),
+                                           ' ', ''),
+                                       30
+                                       ),
+                                       publisher
+                                   ORDER BY published_at DESC, id DESC
+                               ) AS rn
+                        FROM news
+                        WHERE published_at >= CURDATE() - INTERVAL 1 DAY
+                          AND published_at < CURDATE()
+                    ) t
+                    WHERE t.rn > 1
+                );
+                """;
+
+            // 3. 노이즈성 기사 제거 ([속보], [단독] 단독 제목, 광고성 패턴)
+            String noiseSql = """
+                DELETE FROM news
+                WHERE (
+                    title REGEXP '^\\\\[(속보|단독|긴급|알림)\\\\]$'
+                    OR title LIKE '%〔%'
+                    OR title LIKE '%▶%'
+                    OR LENGTH(title) < 10
+                )
+                AND published_at >= CURDATE() - INTERVAL 1 DAY
+                AND published_at < CURDATE();
+                """;
+
+            int exactDeleted = jdbcTemplate.update(exactDupSql);
+            log.info("✅ 완전 중복 제거: {}건", exactDeleted);
+
+            int similarDeleted = jdbcTemplate.update(similarDupSql);
+            log.info("✅ 유사 제목 중복 제거: {}건", similarDeleted);
+
+            int noiseDeleted = jdbcTemplate.update(noiseSql);
+            log.info("✅ 노이즈 기사 제거: {}건", noiseDeleted);
+
+            log.info("✅ 전체 중복/노이즈 제거 완료: 총 {}건", exactDeleted + similarDeleted + noiseDeleted);
         }
     }
 }

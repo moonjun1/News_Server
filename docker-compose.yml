@@ -41,7 +41,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     depends_on:
-      # mysql 의존성 제거 - RDS 사용으로 인해 불필요
+      mysql:
+        condition: service_healthy
       redis-cache:
         condition: service_started
       redis-session1:
@@ -51,33 +52,33 @@ services:
     networks:
       - backend
 
-  # MySQL 서비스 제거 - RDS 사용
-  # mysql:
-  #   image: mysql:8.0
-  #   container_name: mysql
-  #   logging:
-  #     driver: "json-file"
-  #     options:
-  #       max-size: "10m"
-  #       max-file: "3"
-  #   environment:
-  #     - TZ=Asia/Seoul
-  #     - MYSQL_ROOT_PASSWORD=${DB_PASS}
-  #     - MYSQL_DATABASE=backendDB
-  #   command: ["mysqld", "--default-time-zone=+09:00"]
-  #   ports:
-  #     - "3306:3306"
-  #   healthcheck:
-  #     test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #   volumes:
-  #     - mysql-data:/var/lib/mysql
-  #     - /etc/localtime:/etc/localtime:ro
-  #     - /etc/timezone:/etc/timezone:ro
-  #   networks:
-  #     - backend
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    environment:
+      - TZ=Asia/Seoul
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
+      - MYSQL_DATABASE=backendDB
+    command: ["mysqld", "--default-time-zone=+09:00"]
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./SpringBoot/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - backend
 
   redis-cache:
     image: redis:7.2
@@ -246,7 +247,7 @@ services:
       - backend
 
 volumes:
-  # mysql-data: # RDS 사용으로 인해 불필요
+  mysql-data:
   redis-cache-data:
   redis-session1-data:
   redis-session2-data:
